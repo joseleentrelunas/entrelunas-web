@@ -1,0 +1,827 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Entrelunas · Vende tu vivienda con estrategia</title>
+<meta name="description" content="En Entrelunas diseñamos una estrategia para cada vivienda, buscamos activamente compradores y te mostramos cada paso del proceso.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<style>
+/* Guía de estilo Entrelunas. Día = la guía tal cual (crema, tinta, dorado oscuro); noche = la misma paleta invertida sobre tinta.
+   Tema propio: --k (0 = día, 1 = noche) lo controla el interruptor del hero; todo color se mezcla sobre --k. */
+:root{
+  color-scheme:dark;
+  --u:min(calc(100vw/1600),calc(100vh/900));
+  --k:1;--k2:1;--dip:0;
+  --d:calc((1 - var(--k))*100%);
+  --crema:#F5EBD8;--tinta:#2A2119;--texto:#3E3226;--sec:#5A4A38;--oro:#8A5F17;--oro-logo:#CFA42E;--crema2:#EADFC8;
+  --ink:color-mix(in srgb,var(--tinta) var(--d),#fff);
+  --nav:color-mix(in srgb,var(--tinta) var(--d),#f8f1e4);
+  --soft:color-mix(in srgb,var(--texto) var(--d),#efe5d3);
+  --bg:color-mix(in srgb,var(--crema) var(--d),#1e1812);
+  --fg:color-mix(in srgb,var(--tinta) var(--d),var(--crema));
+  --body:color-mix(in srgb,var(--texto) var(--d),#e6dac4);
+  --muted:color-mix(in srgb,var(--sec) var(--d),#c4b49b);
+  --line:color-mix(in srgb,var(--fg) 15%,transparent);
+  --gold:color-mix(in srgb,var(--oro) var(--d),#dcbc6e);
+  --panel:color-mix(in srgb,var(--crema2) var(--d),#2b231b);
+  --glass:color-mix(in srgb,color-mix(in srgb,var(--crema2) var(--d),#fff) calc(7% + (1 - var(--k))*55%),transparent);
+  --glass-line:color-mix(in srgb,color-mix(in srgb,var(--oro-logo) var(--d),#fff) calc(14% + (1 - var(--k))*20%),transparent);
+  --cta:var(--oro-logo);
+  --serif:Fraunces,"Times New Roman",serif;
+  --sans:"DM Sans",Helvetica,Arial,sans-serif;
+  --r:12px;--rp:6px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--bg)}
+html.lenis,html.lenis body{height:auto}
+.lenis.lenis-smooth{scroll-behavior:auto!important}
+body{font-family:var(--sans);-webkit-font-smoothing:antialiased;background:var(--bg);color:var(--fg);line-height:1.55;overflow-x:clip}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+img{display:block;max-width:100%}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+h2,h3{text-wrap:balance}
+
+/* Atmósfera fija detrás de las secciones */
+#atmos{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+main,footer{position:relative;z-index:1}
+
+/* ---------- Cabecera ---------- */
+.bar{position:fixed;inset:0 0 auto;z-index:10;display:flex;align-items:center;height:calc(84*var(--u) + 14px);padding:env(safe-area-inset-top,0px) max(calc(38*var(--u)),env(safe-area-inset-right,0px)) 0 max(calc(38*var(--u)),env(safe-area-inset-left,0px));color:var(--nav);transition:background .5s,box-shadow .5s,height .5s}
+.bar.solid{height:68px;background:color-mix(in srgb,var(--bg) 70%,transparent);-webkit-backdrop-filter:blur(18px) saturate(150%);backdrop-filter:blur(18px) saturate(150%);box-shadow:0 1px 0 var(--line);color:var(--fg)}
+.prog{position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--gold);transform:scaleX(0);transform-origin:left;opacity:0;transition:opacity .4s}
+.bar.solid .prog{opacity:1}
+.logo{flex:1 1 0;display:flex;align-items:center}
+.logo span{position:relative;display:block;width:calc(132*var(--u) + 24px);aspect-ratio:671/474;max-height:58px}
+.bar.solid .logo span{max-height:46px}
+.logo img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:left center}
+.logo .lc{opacity:var(--k)}
+.links{display:flex;gap:calc(40*var(--u));list-style:none;font-size:calc(15*var(--u) + 2px);font-weight:500;opacity:calc(1 - var(--dip)*.82)}
+.links a{position:relative;padding:6px 0}
+.links a:after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:currentColor;transform:scaleX(0);transform-origin:right;transition:transform .45s cubic-bezier(.16,1,.3,1)}
+.links a:hover:after{transform:scaleX(1);transform-origin:left}
+.side{flex:1 1 0;display:flex;justify-content:flex-end}
+.cta{display:inline-flex;align-items:center;gap:10px;height:calc(40*var(--u) + 8px);padding:0 calc(22*var(--u) + 6px);border-radius:99px;background:var(--cta);color:var(--tinta);font-size:calc(14*var(--u) + 2px);font-weight:700;white-space:nowrap;opacity:calc(1 - var(--dip)*.62);box-shadow:0 8px 30px -10px rgba(207,164,46,.65);transition:background .25s}
+.cta:hover{background:#dbb547}
+.cta em{font-style:normal}
+.cta b{transition:transform .35s cubic-bezier(.16,1,.3,1)}
+.cta:hover b{transform:translateX(4px)}
+
+/* ---------- Hero (niebla día / noche) ---------- */
+.hero{position:relative;height:100svh;min-height:560px;overflow:hidden;isolation:isolate;background:#0b1426}
+.layer,.layer img{position:absolute;inset:0;width:100%;height:100%}
+.layer img{object-fit:cover;object-position:50% 62%}
+.sky img{filter:blur(calc(7*var(--u)));transform:scale(1.05)}
+#skyN{opacity:var(--k)}
+.sky{transform:translate3d(calc(var(--px,0)*-10px),calc(var(--py,0)*-6px),0) scale(1.04)}
+.home{will-change:transform;transform:translate3d(calc(var(--px,0)*16px),calc(var(--sink,0px) + var(--py,0)*8px),0) scale(1.035)}
+.home .set{position:absolute;inset:0;visibility:hidden}
+.home .set.is-on{visibility:visible}
+.ground{-webkit-mask-image:linear-gradient(transparent 54%,#000 64%);mask-image:linear-gradient(transparent 54%,#000 64%)}
+.cut{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 62%}
+.tilt{position:absolute;inset:0;pointer-events:none;-webkit-backdrop-filter:blur(calc(9*var(--u)));backdrop-filter:blur(calc(9*var(--u)));-webkit-mask-image:linear-gradient(transparent 70%,#000 92%);mask-image:linear-gradient(transparent 70%,#000 92%)}
+#fog{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.fade{position:absolute;inset:auto 0 0;height:16%;background:linear-gradient(transparent,var(--bg));pointer-events:none}
+.ui{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;pointer-events:none;padding-top:calc(84*var(--u) + 14px)}
+.ui a,.ui button{pointer-events:auto}
+h1{margin-top:calc(46*var(--u));text-align:center;font-family:var(--serif);font-size:calc(86*var(--u));line-height:1.04;font-weight:500;letter-spacing:-.01em;color:var(--ink);padding-bottom:.08em}
+h1>span{display:block}
+.ln{display:block}
+h1 .l1{opacity:calc(1 - var(--dip)*.8)}
+h1 i{font-weight:500;color:color-mix(in srgb,var(--oro) calc((1 - var(--k2))*100%),#e9c878)}
+.dock{margin-top:auto;padding-bottom:calc(44*var(--u) + 8px);display:flex;flex-direction:column;align-items:center}
+.toggle{position:relative;display:grid;grid-template-columns:1fr 1fr;width:calc(524*var(--u));height:calc(86*var(--u));padding:calc(2*var(--u));border-radius:calc(16*var(--u));overflow:hidden;
+  background:rgba(120,132,140,.34);border:1px solid rgba(255,255,255,.2);-webkit-backdrop-filter:blur(calc(14*var(--u)));backdrop-filter:blur(calc(14*var(--u)))}
+.toggle button{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:calc(3*var(--u));border-radius:calc(13*var(--u));color:#fff;overflow:hidden}
+.toggle button:before{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(160deg,#f7f1e2,#e4c98f 90%);box-shadow:inset 0 0 calc(18*var(--u)) rgba(255,255,255,.65);opacity:var(--on)}
+.toggle b,.toggle small{position:relative;color:color-mix(in srgb,var(--tinta) calc(var(--on)*100%),#fff)}
+.toggle b{font-family:var(--serif);font-size:calc(27*var(--u));font-weight:500}
+.toggle small{font-size:calc(14*var(--u));opacity:.78;letter-spacing:.01em}
+.toggle button:focus-visible{outline:2px solid #fff;outline-offset:-4px}
+#bm{--on:calc(1 - var(--k))}#bn{--on:var(--k)}
+.cap{margin-top:calc(22*var(--u));max-width:calc(560*var(--u));text-align:center;font-size:calc(16.4*var(--u));line-height:1.45;color:var(--soft)}
+
+/* ---------- Comunes ---------- */
+.wrap{width:min(1240px,100%);margin-inline:auto;padding-inline:max(24px,env(safe-area-inset-left,0px)) max(24px,env(safe-area-inset-right,0px))}
+.sec{padding-block:clamp(90px,12vw,170px)}
+h2{font-family:var(--serif);font-weight:500;font-size:clamp(40px,5vw,68px);line-height:1.06;letter-spacing:-.012em;padding-bottom:.06em}
+h2 i,.pull i{color:var(--gold)}
+.lead{margin-top:18px;max-width:58ch;color:var(--muted);font-size:17px}
+.eyebrow{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:18px}
+/* palabras partidas para las entradas de titulares */
+.w{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.14em;margin-bottom:-.14em}
+.wi{display:inline-block;will-change:transform}
+/* cristal */
+.glass{position:relative;background:var(--glass);border:1px solid var(--glass-line);border-radius:var(--r);
+  -webkit-backdrop-filter:blur(22px) saturate(160%);backdrop-filter:blur(22px) saturate(160%);
+  box-shadow:inset 0 1px 0 color-mix(in srgb,#fff 22%,transparent),0 30px 80px -40px rgba(4,10,16,.55)}
+/* foco que sigue al cursor sobre el cristal */
+.glass:after{content:"";position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .4s;
+  background:radial-gradient(420px circle at var(--mx,50%) var(--my,50%),color-mix(in srgb,var(--gold) 22%,transparent),transparent 60%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;padding:1px}
+.glass:hover:after{opacity:1}
+.glass .shine{position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .4s;
+  background:radial-gradient(500px circle at var(--mx,50%) var(--my,50%),color-mix(in srgb,#fff 9%,transparent),transparent 55%)}
+.glass:hover .shine{opacity:1}
+[data-tilt]{transform-style:preserve-3d;will-change:transform}
+
+/* ---------- Filosofía: luna que crece ---------- */
+.philo .wrap{display:grid;grid-template-columns:5fr 6fr;gap:clamp(40px,7vw,110px);align-items:center}
+.arch-wrap{position:relative;isolation:isolate}
+.moon{position:absolute;width:78%;max-width:440px;right:-26%;top:-14%;z-index:-1;filter:drop-shadow(0 0 60px color-mix(in srgb,var(--gold) 45%,transparent))}
+.arch{border-radius:999px 999px var(--r) var(--r);overflow:hidden;aspect-ratio:4/5;background:color-mix(in srgb,var(--fg) 8%,transparent)}
+.arch img{width:100%;height:118%;object-fit:cover;will-change:transform}
+.philo .txt p{margin-top:24px;max-width:52ch;font-size:clamp(18px,1.5vw,21px);line-height:1.6;color:var(--fg)}
+.ws{transition:color .2s}
+.philo .pull{color:var(--fg);margin-top:44px;padding-top:28px;border-top:1px solid var(--line);font-family:var(--serif);font-size:clamp(28px,2.6vw,38px);line-height:1.15}
+
+/* ---------- Cinta ---------- */
+.band{position:relative;z-index:1;padding-block:28px;overflow:hidden;border-block:1px solid var(--line)}
+.band .row{display:flex;width:max-content;will-change:transform}
+.band span{font-family:var(--serif);font-size:clamp(46px,7vw,104px);line-height:1;white-space:nowrap;padding-right:.5em;display:flex;align-items:center;gap:.5em}
+.band span i{color:var(--gold)}
+.band span em{font-style:normal;color:transparent;-webkit-text-stroke:1px color-mix(in srgb,var(--fg) 55%,transparent)}
+.band svg{width:.42em;height:.42em;flex:none}
+
+/* ---------- Diferencias: cartas apiladas ---------- */
+.diff .wrap{display:grid;grid-template-columns:5fr 6fr;gap:clamp(40px,6vw,96px);align-items:start}
+.diff .stick{position:sticky;top:110px}
+.diff figure{margin-top:36px;border-radius:var(--r);overflow:hidden;aspect-ratio:5/4}
+.diff figure img{width:100%;height:120%;object-fit:cover;will-change:transform}
+.stack{list-style:none;display:grid;gap:26px;padding-bottom:40px}
+.stack>li{position:sticky;top:calc(118px + var(--i)*20px);transform-origin:50% 0}
+.card{padding:clamp(26px,3vw,40px);display:grid;grid-template-columns:auto 1fr;gap:10px 26px;min-height:240px;align-content:start}
+.card .n{font-family:var(--serif);font-size:clamp(56px,5vw,78px);line-height:.85;color:var(--gold);transform:translateZ(40px)}
+.card h3{font-family:var(--serif);font-weight:500;font-size:clamp(28px,2.4vw,34px);line-height:1.1;align-self:end;transform:translateZ(26px)}
+.card p{grid-column:2;color:var(--muted);transform:translateZ(16px)}
+.card p strong{color:var(--fg);font-weight:500}
+
+/* ---------- Método ---------- */
+.method .panel{padding:clamp(32px,5vw,72px)}
+.method .head{text-align:center;display:flex;flex-direction:column;align-items:center}
+.tabs{position:relative;display:inline-grid;grid-template-columns:1fr 1fr;margin-top:34px;padding:4px;border-radius:99px;border:1px solid var(--glass-line);background:var(--glass)}
+.tabs .pill{position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:99px;background:var(--fg);transition:transform .55s cubic-bezier(.16,1,.3,1)}
+.tabs[data-i="1"] .pill{transform:translateX(100%)}
+.tabs button{position:relative;padding:10px 22px;border-radius:99px;font-size:14px;font-weight:600;color:var(--muted);transition:color .4s}
+.tabs button[aria-selected=true]{color:var(--bg)}
+.track-steps{position:relative;margin-top:64px}
+.rail{position:absolute;left:27px;right:0;top:27px;height:1px;background:var(--line)}
+.rail i{position:absolute;inset:0;background:var(--gold);transform:scaleX(0);transform-origin:left;box-shadow:0 0 12px var(--gold)}
+.steps{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:32px;list-style:none}
+.steps .n{display:grid;place-items:center;width:54px;height:54px;border-radius:50%;background:var(--bg);border:1px solid var(--line);font-family:var(--serif);font-size:24px;color:var(--muted);transition:border-color .5s,color .5s,box-shadow .5s,background .5s}
+.steps li.on .n{border-color:var(--oro-logo);color:var(--tinta);background:var(--oro-logo);box-shadow:0 0 0 6px color-mix(in srgb,var(--gold) 18%,transparent),0 0 30px color-mix(in srgb,var(--gold) 50%,transparent)}
+.steps small{display:block;margin-top:22px;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.steps h3{margin-top:14px;font-family:var(--serif);font-weight:500;font-size:30px;line-height:1.1}
+.steps p{margin-top:10px;color:var(--muted);max-width:30ch}
+.note{margin-top:44px;text-align:center;color:var(--muted);font-size:15px}
+
+/* ---------- Propiedad ---------- */
+.prop .card2{margin-top:52px;display:grid;grid-template-columns:7fr 5fr;gap:clamp(32px,5vw,72px);align-items:start}
+.gal{position:relative}
+.reveal{clip-path:inset(0 round var(--r));border-radius:var(--r);overflow:hidden}
+.track{display:grid;grid-auto-flow:column;grid-auto-columns:100%;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;aspect-ratio:4/3;max-width:100%;background:color-mix(in srgb,var(--fg) 8%,transparent)}
+.track::-webkit-scrollbar{display:none}
+.track img{width:100%;height:100%;object-fit:cover;scroll-snap-align:start}
+.gnav{position:absolute;right:16px;bottom:16px;display:flex;gap:8px}
+.gnav button{width:46px;height:46px;border-radius:50%;background:rgba(12,23,32,.55);color:#fff;font-size:18px;border:1px solid rgba(255,255,255,.2);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);transition:background .25s,transform .25s}
+.gnav button:hover{background:rgba(12,23,32,.85)}
+.gnav button:active{transform:scale(.94)}
+.thumbs{display:grid;grid-template-columns:repeat(10,1fr);gap:6px;margin-top:10px}
+.thumbs button{aspect-ratio:1;border-radius:8px;overflow:hidden;opacity:.45;transition:opacity .3s,transform .3s}
+.thumbs button.on,.thumbs button:hover{opacity:1}
+.thumbs img{width:100%;height:100%;object-fit:cover}
+.info{padding:clamp(26px,3vw,38px)}
+.loc{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.info h3{margin-top:10px;font-family:var(--serif);font-weight:500;font-size:clamp(34px,3.4vw,46px);line-height:1.05}
+.info .desc{margin-top:16px;color:var(--muted)}
+.feat{margin-top:22px;display:grid;gap:14px}
+.feat dt{font-weight:600}
+.feat dd{color:var(--muted);font-size:15px}
+.swap{margin-top:20px;font-size:14px;color:var(--muted)}
+.specs{margin-top:26px;padding-top:22px;border-top:1px solid var(--line);display:flex;align-items:baseline;flex-wrap:wrap;gap:10px 22px}
+.specs span{font-weight:500}
+.price{margin-left:auto;font-family:var(--serif);font-size:40px;font-weight:500;color:var(--gold);font-variant-numeric:tabular-nums}
+
+/* ---------- Contacto + FAQ ---------- */
+.contact .wrap{display:grid;grid-template-columns:1fr 1fr;gap:clamp(40px,6vw,96px);align-items:start}
+.faq{margin-top:48px}
+.faq h3{font-family:var(--serif);font-weight:500;font-size:28px;margin-bottom:12px}
+.faq details{border-bottom:1px solid var(--line)}
+.faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:16px;padding:18px 0;font-weight:500}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary:after{content:"+";font-size:22px;line-height:1;color:var(--gold);transition:transform .4s cubic-bezier(.16,1,.3,1)}
+.faq details[open] summary:after{transform:rotate(45deg)}
+.faq details p{padding:0 0 20px;color:var(--muted);max-width:56ch}
+form.glass{padding:clamp(24px,3vw,40px);display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.f{display:grid;gap:8px;min-width:0}
+.f.full{grid-column:1/-1}
+label{font-size:14px;font-weight:600}
+input,select,textarea{font:inherit;font-size:15px;color:var(--fg);background:color-mix(in srgb,var(--bg) 60%,transparent);border:1px solid color-mix(in srgb,var(--fg) 26%,transparent);border-radius:12px;padding:12px 14px;width:100%;transition:border-color .3s,box-shadow .3s}
+select option{background:var(--bg);color:var(--fg)}
+input:focus,select:focus,textarea:focus{outline:0;border-color:var(--gold);box-shadow:0 0 0 4px color-mix(in srgb,var(--gold) 22%,transparent)}
+textarea{min-height:110px;resize:vertical}
+.chk{grid-column:1/-1;display:flex;gap:12px;align-items:flex-start;font-size:14px;font-weight:400;color:var(--muted)}
+.chk input{width:18px;height:18px;margin-top:2px;accent-color:#b8914c;flex:none}
+.err{font-size:13px;color:color-mix(in srgb,#a3341f var(--d),#f08c74)}
+form .cta{justify-self:start;height:50px;border:0;cursor:pointer;opacity:1}
+.ok{grid-column:1/-1;padding:18px;border-radius:12px;border:1px solid var(--gold)}
+
+/* ---------- Pie ---------- */
+footer{padding-block:80px 40px;border-top:1px solid var(--line);overflow:hidden}
+.giant{font-family:var(--serif);font-weight:500;font-size:clamp(72px,19vw,300px);line-height:.9;letter-spacing:-.03em;text-align:center;white-space:nowrap;padding-bottom:.12em}
+.giant i{color:var(--gold)}
+.giant .c{display:inline-block}
+.foot{margin-top:48px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.foot nav{display:flex;gap:28px;flex-wrap:wrap;font-size:14px;color:var(--muted)}
+.foot small{color:var(--muted)}
+
+@media (max-width:980px){
+  .links{display:none}
+  .philo .wrap,.diff .wrap,.prop .card2,.contact .wrap{grid-template-columns:1fr}
+  .arch-wrap{max-width:420px}
+  .diff .stick{position:static}
+  .steps{grid-template-columns:1fr 1fr;row-gap:48px}
+  .rail{display:none}
+}
+@media (max-width:820px){
+  :root{--u:1px}
+  .bar{height:68px;padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px))}
+  .logo span{width:112px}
+  .cta{height:40px;padding:0 16px;font-size:13px}
+  .ui{padding-top:68px}
+  h1{margin-top:30px;padding:0 16px .08em;font-size:clamp(36px,9.6vw,62px)}
+  .layer img,.cut{object-position:72% 62%}
+  .dock{width:100%;padding:0 16px 24px}
+  .toggle{width:100%;max-width:440px;height:74px}
+  .toggle b{font-size:23px}.toggle small{font-size:12.5px}
+  .cap{font-size:14px;max-width:360px}
+  .wrap{padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px))}
+  form.glass{grid-template-columns:1fr}
+  .price{margin-left:0;width:100%}
+  .moon{right:-18%;top:-10%;width:70%}
+  .stack>li{top:calc(84px + var(--i)*14px)}
+  .card{grid-template-columns:1fr;min-height:0}.card p{grid-column:1}
+  .thumbs{grid-template-columns:repeat(5,1fr)}
+}
+@media (max-width:560px){
+  .steps{grid-template-columns:1fr}
+  .side .cta span{display:none}
+}
+@media (prefers-reduced-transparency:reduce){
+  .glass{background:var(--panel);-webkit-backdrop-filter:none;backdrop-filter:none}
+}
+/* ---------- Guía de estilo: pesos, texto, etiquetas, fotos y cifras ---------- */
+h1,h2,h3,.toggle b,.band span,.giant,.card .n,.steps .n,.pull,.faq h3{font-weight:600;font-variation-settings:"opsz" 72}
+h2 i,.pull i,.giant i{font-weight:500}
+.lead,.philo .txt p,.info .desc,.faq details p,.card p,.steps p,.feat dd{color:var(--body)}
+.lead,.philo .txt p,.info .desc{font-size:16px}
+.feat dd,.faq details p{font-size:15px}
+.eyebrow,.loc,.steps small{font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+.diff figure,.reveal,.track,.thumbs button{border-radius:var(--rp)}
+.arch{border-radius:999px 999px var(--rp) var(--rp)}
+.feat,.swap{background:var(--panel);border-radius:var(--rp);padding:16px 18px}
+.price{position:relative;font-size:34px;padding-top:12px}
+.price:before{content:"";position:absolute;left:0;top:0;width:44px;height:2px;background:var(--oro-logo)}
+.visit{margin-top:24px}
+.prog,.rail i{background:var(--oro-logo)}
+h1{text-shadow:0 0 40px color-mix(in srgb,rgba(245,235,216,1) var(--d),rgba(12,9,6,.55)),0 0 16px color-mix(in srgb,rgba(245,235,216,.95) var(--d),transparent),0 0 4px color-mix(in srgb,rgba(245,235,216,.9) var(--d),transparent)}
+.stack .card{background:color-mix(in srgb,var(--panel) 95%,transparent)}
+.diff{padding-bottom:clamp(40px,6vw,80px)}
+[hidden]{display:none!important}
+.contactos{display:flex;gap:6px 22px;flex-wrap:wrap;font-size:14px;color:var(--fg);user-select:text}
+</style>
+</head>
+<body>
+
+<canvas id="atmos" aria-hidden="true"></canvas>
+
+<header class="bar" id="bar">
+  <a class="logo" href="#inicio" aria-label="Entrelunas, inicio">
+    <span><img src="assets/logo-entrelunas.svg" alt=""><img class="lc" src="assets/logo-entrelunas-claro.svg" alt=""></span>
+  </a>
+  <ul class="links">
+    <li><a href="#inicio">Inicio</a></li><li><a href="#filosofia">Filosofía</a></li><li><a href="#metodo">Método</a></li><li><a href="#propiedades">Propiedades</a></li><li><a href="#contacto">Contacto</a></li>
+  </ul>
+  <div class="side"><a class="cta mag" href="#contacto"><em>Quiero vender<span> mi vivienda</span></em><b aria-hidden="true">→</b></a></div>
+  <i class="prog" id="prog"></i>
+</header>
+
+<main>
+<section class="hero" id="inicio">
+  <div class="layer sky">
+    <img id="skyM" alt="" src="assets/hero/cielo-dia.webp">
+    <img id="skyN" alt="" src="assets/hero/cielo-noche.webp">
+  </div>
+  <div class="layer home">
+    <div class="set" id="setM">
+      <div class="layer ground"><img alt="" src="assets/hero/suelo-dia.webp"></div>
+      <img class="cut" alt="Casa con jardín bajo la luz suave de la mañana" src="assets/hero/casa-dia.webp">
+    </div>
+    <div class="set is-on" id="setN">
+      <div class="layer ground"><img alt="" src="assets/hero/suelo-noche.webp"></div>
+      <img class="cut" alt="La misma casa al anochecer con las ventanas encendidas" src="assets/hero/casa-noche.webp">
+    </div>
+  </div>
+  <div class="tilt"></div>
+  <canvas id="fog" aria-hidden="true"></canvas>
+  <div class="fade"></div>
+  <div class="ui">
+    <h1><span class="l1"><span class="ln">Tu casa merece algo más</span></span><span><span class="ln"><i>que un anuncio.</i></span></span></h1>
+    <div class="dock">
+      <div class="toggle" role="group" aria-label="Momento del día">
+        <button id="bm" aria-pressed="false"><b>Día</b><small>Más transparencia</small></button>
+        <button id="bn" aria-pressed="true"><b>Noche</b><small>Más compromiso</small></button>
+      </div>
+      <p class="cap">En Entrelunas diseñamos una estrategia para cada vivienda, buscamos activamente compradores y te mostramos cada paso del proceso.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec philo" id="filosofia">
+  <div class="wrap">
+    <div class="arch-wrap">
+      <svg class="moon" viewBox="0 0 200 200" aria-hidden="true">
+        <defs>
+          <radialGradient id="mg" cx="40%" cy="38%" r="70%"><stop offset="0" stop-color="#fbf1da"/><stop offset=".6" stop-color="#e9cf9a"/><stop offset="1" stop-color="#c79f5c"/></radialGradient>
+          <mask id="phase"><rect width="200" height="200" fill="#fff"/><circle id="shade" cx="112" cy="96" r="88" fill="#000"/></mask>
+        </defs>
+        <g mask="url(#phase)">
+          <circle cx="100" cy="100" r="86" fill="url(#mg)"/>
+          <circle cx="72" cy="80" r="13" fill="#c9a364" opacity=".35"/><circle cx="118" cy="128" r="18" fill="#c9a364" opacity=".28"/><circle cx="128" cy="70" r="8" fill="#c9a364" opacity=".3"/>
+        </g>
+      </svg>
+      <div class="arch"><img src="assets/detail.jpg" alt="Detalle de un arco de cal y cortina de lino"></div>
+    </div>
+    <div class="txt">
+      <p class="eyebrow">Filosofía</p>
+      <h2 data-split>Entre una etapa y otra, hay <i>decisiones importantes.</i></h2>
+      <p data-scrub>Cada vivienda representa una etapa de la vida. Vender es cerrar una y abrir la siguiente. Te acompañamos en esa transición con un plan claro, un único responsable y total visibilidad de lo que hacemos.</p>
+      <p class="pull" data-split>Tu vivienda <i>no es un anuncio más.</i></p>
+    </div>
+  </div>
+</section>
+
+<div class="band" aria-label="Más estrategia, más transparencia, más compromiso">
+  <div class="row" id="row" aria-hidden="true">
+    <span>Más <i>estrategia</i><svg viewBox="0 0 20 20"><path fill="currentColor" d="M13 2.5a8 8 0 1 0 4.5 13.6A7 7 0 0 1 13 2.5Z"/></svg><em>Más transparencia</em><svg viewBox="0 0 20 20"><path fill="currentColor" d="M13 2.5a8 8 0 1 0 4.5 13.6A7 7 0 0 1 13 2.5Z"/></svg>Más <i>compromiso</i><svg viewBox="0 0 20 20"><path fill="currentColor" d="M13 2.5a8 8 0 1 0 4.5 13.6A7 7 0 0 1 13 2.5Z"/></svg></span>
+    <span>Más <i>estrategia</i><svg viewBox="0 0 20 20"><path fill="currentColor" d="M13 2.5a8 8 0 1 0 4.5 13.6A7 7 0 0 1 13 2.5Z"/></svg><em>Más transparencia</em><svg viewBox="0 0 20 20"><path fill="currentColor" d="M13 2.5a8 8 0 1 0 4.5 13.6A7 7 0 0 1 13 2.5Z"/></svg>Más <i>compromiso</i><svg viewBox="0 0 20 20"><path fill="currentColor" d="M13 2.5a8 8 0 1 0 4.5 13.6A7 7 0 0 1 13 2.5Z"/></svg></span>
+  </div>
+</div>
+
+<section class="sec diff" id="diferencias">
+  <div class="wrap">
+    <div class="stick">
+      <h2 data-split>No confundimos publicar con <i>vender.</i></h2>
+      <p class="lead">Cinco compromisos que cambian cómo se vende una vivienda.</p>
+      <figure><img src="assets/terraza.jpg" alt="Terraza abierta al mar al atardecer"></figure>
+    </div>
+    <ol class="stack">
+      <li style="--i:0"><div class="card glass" data-tilt><i class="shine"></i><span class="n">01</span><h3>Diagnóstico estratégico</h3><p>Antes de vender, entendemos el verdadero potencial de tu vivienda. <strong>El precio se apoya en un rango defendible.</strong></p></div></li>
+      <li style="--i:1"><div class="card glass" data-tilt><i class="shine"></i><span class="n">02</span><h3>Comercialización activa</h3><p>No esperamos a que aparezca un comprador. Salimos a buscarlo, con campañas segmentadas y una red de agencias colaboradoras.</p></div></li>
+      <li style="--i:2"><div class="card glass" data-tilt><i class="shine"></i><span class="n">03</span><h3>Transparencia radical</h3><p>Sabrás qué hacemos por tu vivienda y qué resultados estamos consiguiendo: <strong>visitas, contactos, ofertas, acciones y recomendaciones.</strong></p></div></li>
+      <li style="--i:3"><div class="card glass" data-tilt><i class="shine"></i><span class="n">04</span><h3>Exclusiva colaborativa</h3><p>La exclusiva se gana cada semana. Un acuerdo con compromisos recíprocos, comunicación periódica y seguimiento verificable.</p></div></li>
+      <li style="--i:4"><div class="card glass" data-tilt><i class="shine"></i><span class="n">05</span><h3>Gestión integral hasta la firma</h3><p>Nos ocupamos de mucho más que encontrar un comprador. Del diagnóstico a la entrega de llaves: <strong>un único responsable y una red de profesionales.</strong></p></div></li>
+    </ol>
+  </div>
+</section>
+
+<section class="sec method" id="metodo">
+  <div class="wrap">
+    <div class="panel glass">
+      <i class="shine"></i>
+      <div class="head">
+        <h2 data-split>Así trabajamos en <i>Entrelunas</i></h2>
+        <p class="lead">Cada vivienda es única. Por eso seguimos un método que combina análisis, estrategia, acción y acompañamiento, con un único objetivo: conseguir el mejor resultado para ti.</p>
+        <div class="tabs" id="tabs" role="tablist" aria-label="Ver método" data-i="0">
+          <i class="pill" aria-hidden="true"></i>
+          <button role="tab" id="t1" aria-selected="true" aria-controls="p1">El método</button>
+          <button role="tab" id="t2" aria-selected="false" aria-controls="p2" tabindex="-1">Los primeros 30 días</button>
+        </div>
+      </div>
+      <div class="track-steps" id="ts">
+        <div class="rail"><i id="rail"></i></div>
+        <ol class="steps" id="p1" role="tabpanel" aria-labelledby="t1">
+          <li><span class="n">1</span><h3>Analizamos</h3><p>Estudiamos el mercado, tu vivienda y tus objetivos.</p></li>
+          <li><span class="n">2</span><h3>Diseñamos</h3><p>Creamos un plan de comercialización a medida.</p></li>
+          <li><span class="n">3</span><h3>Actuamos</h3><p>Buscamos compradores y gestionamos las visitas.</p></li>
+          <li><span class="n">4</span><h3>Acompañamos</h3><p>Coordinamos todo hasta la firma y la entrega.</p></li>
+        </ol>
+        <ol class="steps" id="p2" role="tabpanel" aria-labelledby="t2" hidden>
+          <li><span class="n">1</span><small>Días 1-7</small><h3>Preparación</h3><p>Diagnóstico cerrado, documentación revisada, reportaje y mensajes clave.</p></li>
+          <li><span class="n">2</span><small>Días 8-14</small><h3>Activación</h3><p>Lanzamiento en canales, campañas segmentadas y red de colaboradores.</p></li>
+          <li><span class="n">3</span><small>Días 15-23</small><h3>Optimización</h3><p>Lectura de datos, ajuste de mensajes, público y agenda de visitas.</p></li>
+          <li><span class="n">4</span><small>Días 24-30</small><h3>Revisión</h3><p>Informe compartido contigo y decisiones para el siguiente ciclo.</p></li>
+        </ol>
+      </div>
+      <p class="note" id="n2" hidden>Un plan de acciones para el primer ciclo, no una promesa de venta en 30 días.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec prop" id="propiedades">
+  <div class="wrap">
+    <h2 data-split>Viviendas con <i>estrategia.</i></h2>
+    <article class="card2">
+      <div class="gal">
+        <div class="reveal" id="reveal">
+          <div class="track" id="track" tabindex="0" aria-label="Fotos del chalet en El Cuco">
+            <img src="assets/cuco-0.jpg" alt="Chalet en El Cuco, foto 1">
+            <img src="assets/cuco-1.jpg" alt="Chalet en El Cuco, foto 2" loading="lazy">
+            <img src="assets/cuco-2.jpg" alt="Chalet en El Cuco, foto 3" loading="lazy">
+            <img src="assets/cuco-3.jpg" alt="Chalet en El Cuco, foto 4" loading="lazy">
+            <img src="assets/cuco-4.jpg" alt="Chalet en El Cuco, foto 5" loading="lazy">
+            <img src="assets/cuco-5.jpg" alt="Chalet en El Cuco, foto 6" loading="lazy">
+            <img src="assets/cuco-6.jpg" alt="Chalet en El Cuco, foto 7" loading="lazy">
+            <img src="assets/cuco-7.jpg" alt="Chalet en El Cuco, foto 8" loading="lazy">
+            <img src="assets/cuco-8.jpg" alt="Chalet en El Cuco, foto 9" loading="lazy">
+            <img src="assets/cuco-9.jpg" alt="Chalet en El Cuco, foto 10" loading="lazy">
+          </div>
+          <div class="gnav"><button id="prev" aria-label="Foto anterior">←</button><button id="next" aria-label="Foto siguiente">→</button></div>
+        </div>
+        <div class="thumbs" id="thumbs"></div>
+      </div>
+      <div class="info glass" data-tilt>
+        <i class="shine"></i>
+        <p class="loc">Jerez de la Frontera, Cádiz</p>
+        <h3>Chalet en El Cuco</h3>
+        <p class="desc">Si buscas espacio, confort y una ubicación inmejorable en Jerez, este chalet en El Cuco lo tiene todo. 390 m² construidos sobre una parcela de 990 m², pensados para disfrutar de la vida en familia sin apreturas.</p>
+        <dl class="feat">
+          <div><dt>Para el día a día</dt><dd>Cocina muy amplia con office y dos salones independientes, uno de ellos con chimenea para los meses de invierno.</dd></div>
+          <div><dt>Espacio de sobra</dt><dd>5 dormitorios grandes, 3 baños completos en el interior y un aseo extra exterior.</dd></div>
+          <div><dt>Exterior para todo el año</dt><dd>Jardín con cabaña de madera y piscina climatizada con cubierta abatible para aprovecharla tanto en verano como en invierno.</dd></div>
+        </dl>
+        <p class="swap"><strong>Opción de permuta.</strong> Los propietarios aceptan opción de permuta por un piso amplio de 4 o 5 dormitorios en zonas como El Bosque, Plaza del Caballo o Manuel de la Quintana.</p>
+        <div class="specs"><span>5 hab.</span><span>3 baños</span><span>390 m²</span><span class="price" id="price">1.100.000 €</span></div>
+        <a class="cta mag visit" href="#contacto"><em>Visita sin compromiso</em><b aria-hidden="true">→</b></a>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="sec contact" id="contacto">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Primera conversación</p>
+      <h2 data-split>Solicita tu diagnóstico <i>inmobiliario.</i></h2>
+      <p class="lead">Cuéntanos sobre tu vivienda. Analizaremos su situación y te propondremos un plan, sin compromiso.</p>
+      <div class="faq" id="faq">
+        <h3>Lo que suelen preguntarnos.</h3>
+        <details><summary>¿El diagnóstico es una tasación oficial?</summary><p>No. Es un análisis comercial profesional que estima un rango de precio defendible. Si necesitas una tasación oficial, te ponemos en contacto con un tasador homologado.</p></details>
+        <details><summary>¿Cuánto cuesta el diagnóstico?</summary><p>Te contamos las condiciones del diagnóstico inicial en la primera conversación, sin compromiso.</p></details>
+        <details><summary>¿El plan de 30 días significa que venderéis en 30 días?</summary><p>No. Es un plan de acciones para el primer ciclo de comercialización. El plazo de venta depende del mercado y de cada vivienda.</p></details>
+        <details><summary>¿Por qué trabajáis en exclusiva?</summary><p>Porque nos permite invertir en tu vivienda y coordinar a otras agencias en un único plan. La planteamos como un acuerdo con compromisos por ambas partes, revisables y verificables.</p></details>
+        <details><summary>¿Colaboráis con otras inmobiliarias?</summary><p>Sí. Compartimos la vivienda con una red de colaboradores para llegar a más compradores, siempre bajo una única coordinación.</p></details>
+        <details><summary>¿Cuándo podré acceder al panel del propietario?</summary><p>El área privada está en preparación. Mientras tanto, compartimos los mismos indicadores en informes periódicos.</p></details>
+      </div>
+    </div>
+    <!-- TODO: conectar el envío del formulario (Formspree, n8n, backend propio...). Ahora solo valida. -->
+    <form id="form" class="glass" novalidate>
+      <i class="shine"></i>
+      <div class="f"><label for="nombre">Nombre</label><input id="nombre" name="nombre" autocomplete="name" required><span class="err"></span></div>
+      <div class="f"><label for="contactoc">Teléfono o correo electrónico</label><input id="contactoc" name="contacto" autocomplete="email" required><span class="err"></span></div>
+      <div class="f full"><label for="ubicacion">Ubicación del inmueble</label><input id="ubicacion" name="ubicacion"></div>
+      <div class="f"><label for="tipo">Tipo de propiedad</label><select id="tipo" name="tipo"><option value="">Selecciona</option><option>Piso</option><option>Ático</option><option>Casa / chalet</option><option>Dúplex</option><option>Local u oficina</option><option>Terreno</option><option>Otro</option></select></div>
+      <div class="f"><label for="situacion">Situación de venta</label><select id="situacion" name="situacion"><option value="">Selecciona</option><option>Estoy valorando vender</option><option>Quiero vender en los próximos meses</option><option>Ya está a la venta con otra agencia o por mi cuenta</option><option>Necesito vender para comprar otra vivienda</option></select></div>
+      <div class="f full"><label for="mensaje">Mensaje (opcional)</label><textarea id="mensaje" name="mensaje"></textarea></div>
+      <label class="chk"><input type="checkbox" id="priv" required> He leído y acepto la política de privacidad. Usaremos tus datos solo para responder a tu solicitud.</label>
+      <span class="err" id="perr" style="grid-column:1/-1"></span>
+      <button class="cta mag" type="submit">Solicitar diagnóstico</button>
+    </form>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p class="giant" id="giant" aria-label="Entrelunas">Entre<i>lunas</i></p>
+    <div class="foot">
+      <a class="logo" href="#inicio" aria-label="Entrelunas, inicio"><span style="width:120px;position:relative;display:block;aspect-ratio:671/474"><img src="assets/logo-entrelunas.svg" alt=""><img class="lc" src="assets/logo-entrelunas-claro.svg" alt=""></span></a>
+      <nav aria-label="Pie"><a href="#filosofia">Filosofía</a><a href="#metodo">Método</a><a href="#propiedades">Propiedades</a><a href="#contacto">Contacto</a></nav>
+      <div class="contactos"><a href="tel:+34620372598">620 37 25 98</a><a href="mailto:joseleentrelunas@gmail.com">joseleentrelunas@gmail.com</a></div>
+      <small>© 2026 Entrelunas</small>
+    </div>
+  </div>
+</footer>
+
+<script>
+const root=document.documentElement.style,$=id=>document.getElementById(id);
+const calm=matchMedia('(prefers-reduced-motion:reduce)').matches;
+const fine=matchMedia('(pointer:fine)').matches;
+const SINK=260,RISE=980,DEPTH=.3;
+const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+const smooth=(a,b,x)=>{x=clamp((x-a)/(b-a));return x*x*(3-2*x)};
+/* fx.intro: 1 = casa hundida en niebla al cargar; fx.sp: progreso de salida del hero */
+const fx={intro:0,sp:0};
+let night=1,target=1,from=1,start=-1e9,queued=null,swapped=true,k=1;
+let px=0,py=0,tx=0,ty=0,pu=-9,pv=-9,tu=-9,tv=-9;
+const hero=$('inicio');
+
+/* ---------- utilidades WebGL ---------- */
+const NOISE=`float h(vec2 p){p=fract(p*vec2(123.34,456.21));p+=dot(p,p+45.32);return fract(p.x*p.y);}
+  float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
+    return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y);}
+  float fbm(vec2 p){float a=.5,s=0.;mat2 m=mat2(1.6,1.2,-1.2,1.6);p=mat2(.8,.6,-.6,.8)*p+5.3;for(int i=0;i<5;i++){s+=a*n(p);p=m*p;a*=.5;}return s;}`;
+const VS=`#version 300 es
+  void main(){vec2 p=vec2((gl_VertexID<<1)&2,gl_VertexID&2);gl_Position=vec4(p*2.-1.,0,1);}`;
+function program(cv,fs,names){
+  const gl=cv.getContext('webgl2',{alpha:true,premultipliedAlpha:true,antialias:false});
+  if(!gl)return null;
+  const sh=(t,s)=>{const o=gl.createShader(t);gl.shaderSource(o,s);gl.compileShader(o);
+    if(!gl.getShaderParameter(o,gl.COMPILE_STATUS))console.error(gl.getShaderInfoLog(o));return o};
+  const pr=gl.createProgram();gl.attachShader(pr,sh(gl.VERTEX_SHADER,VS));gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,fs.replace(/smooth2/g,'smoothstep')));
+  gl.linkProgram(pr);gl.useProgram(pr);
+  const U={};for(const u of names)U[u]=gl.getUniformLocation(pr,u);
+  return {gl,U};
+}
+
+/* ---------- Niebla del hero ---------- */
+const cv=$('fog');
+const F=program(cv,`#version 300 es
+  precision highp float;
+  uniform vec2 R,P;uniform float T,S,K;out vec4 O;
+  ${NOISE}
+  void main(){
+    vec2 uv=gl_FragCoord.xy/R;uv.y=1.-uv.y;
+    float asp=R.x/R.y;vec2 p=vec2(uv.x*asp,uv.y);
+    float t=T*.05;
+    vec2 w=vec2(fbm(p*1.3+vec2(t,-t*.6)),fbm(p*1.3+vec2(-t*.8,t)+7.));
+    float d=fbm(p*1.9+w*1.7+vec2(t*1.6,-t*1.1+S*.5));
+    float e=fbm(p*.9-w+vec2(-t,t*.5)+3.);
+    float low=smooth2(.70,1.04,uv.y+(d-.5)*.34);
+    float side=smooth2(.2,.0,uv.x+(e-.5)*.28)+smooth2(.8,1.,uv.x+(e-.5)*.28);
+    side*=smooth2(.25,.6,uv.y)*.2;
+    float wisps=smooth2(.5,.78,d)*smooth2(.22,.5,uv.y)*smooth2(.86,.6,uv.y)*.18;
+    float rest=clamp(low+side+wisps,0.,1.);
+    float front=1.02-S*.68;
+    float rise=smooth2(front-.02,front+.26,uv.y+(d-.5)*.5);
+    float haze=S*(.3+.46*d);
+    float a=clamp(max(rest,max(rise*.97,haze)),0.,1.);
+    vec3 dayA=vec3(.97,.93,.84),dayB=vec3(.79,.78,.71);
+    vec3 nitA=vec3(.40,.45,.57),nitB=vec3(.15,.19,.29);
+    vec3 c=mix(mix(dayB,dayA,d*1.15),mix(nitB,nitA,d*1.1),K);
+    float porch=exp(-dot((uv-vec2(.72,.74))*vec2(1.7,2.6),(uv-vec2(.72,.74))*vec2(1.7,2.6))*3.2);
+    c=mix(c,vec3(.86,.55,.27),K*porch*.42*(1.-S));
+    vec2 pd=(uv-P)*vec2(asp,1.);
+    a*=1.-exp(-dot(pd,pd)*16.)*.5*(1.-S);
+    float vis=1.-S;
+    vec2 q=(uv-vec2(.8,.15+S*.6))*vec2(asp,1.);float r=length(q);
+    float cres=smooth2(.036,.031,r)*(1.-smooth2(.033,.028,length(q-vec2(.016,-.011))));
+    float moon=(cres+exp(-r*r*70.)*.32)*K;
+    float sun=(smooth2(.06,.03,r)*.55+exp(-r*r*9.)*.42)*(1.-K);
+    vec2 sd=uv-vec2(.82,-.1);float ang=atan(sd.x,sd.y);
+    float rays=pow(n(vec2(ang*8.+T*.04,T*.07)),2.5)*smoothstep(1.2,.15,length(sd))*(1.-K)*.3;
+    float ff=0.;
+    for(int i=0;i<26;i++){float fi=float(i);
+      vec2 fp=vec2(fract(fi*.6180+.07*sin(T*.21+fi)),.6+.32*fract(fi*.371)+.025*sin(T*.6+fi*2.3));
+      vec2 dd=(uv-fp)*vec2(asp,1.);float dq=dot(dd,dd);
+      ff+=(exp(-dq*14000.)+exp(-dq*1600.)*.22)*(.35+.65*pow(.5+.5*sin(T*1.7+fi*3.1),3.));}
+    ff*=K;
+    vec3 lc=vec3(1.,.95,.84)*moon+vec3(1.,.9,.7)*(sun+rays)+vec3(1.,.78,.4)*ff*1.4;
+    float la=clamp((moon+sun+rays+ff)*vis,0.,1.);
+    O=vec4(c*a*(1.-la)+lc*vis,clamp(a+la*(1.-a),0.,1.));
+  }`,['R','P','T','S','K']);
+
+/* ---------- Atmósfera de toda la página ---------- */
+const av=$('atmos');
+const A=program(av,`#version 300 es
+  precision highp float;
+  uniform vec2 R;uniform float T,K,Y;out vec4 O;
+  ${NOISE}
+  void main(){
+    vec2 uv=gl_FragCoord.xy/R;uv.y=1.-uv.y;
+    float asp=R.x/R.y;
+    vec2 p=vec2(uv.x*asp,uv.y+Y*.22);
+    float t=T*.025;
+    float m=fbm(p*1.2+vec2(t,-t*.5)+fbm(p*2.1-vec2(t*.7,t)));
+    float am=smoothstep(.42,.85,m)*.2;
+    vec2 q=vec2(uv.x*asp,uv.y);
+    vec2 g1=vec2(.12*asp+.06*asp*sin(T*.05),.3+.12*cos(T*.04+Y*.6));
+    vec2 g2=vec2(.9*asp+.05*asp*cos(T*.06),.78+.1*sin(T*.05-Y*.5));
+    float a1=exp(-dot(q-g1,q-g1)*3.)*.34,a2=exp(-dot(q-g2,q-g2)*3.)*.26;
+    vec3 mist=mix(vec3(1.,.96,.88),vec3(.42,.52,.7),K);
+    vec3 c1=mix(vec3(.98,.8,.48),vec3(.85,.64,.33),K);
+    vec3 c2=mix(vec3(1.,.93,.8),vec3(.22,.36,.66),K);
+    /* estrellas (noche) */
+    vec2 sp=vec2(uv.x*asp,uv.y+Y*.06)*70.;vec2 ce=floor(sp);vec2 f=fract(sp)-.5;
+    float rr=h(ce);vec2 off=vec2(h(ce+3.1),h(ce+7.7))-.5;
+    float st=step(.972,rr)*smoothstep(.1,0.,length(f-off*.7))*(.35+.65*(.5+.5*sin(T*(.8+rr*3.)+rr*50.)))*K;
+    /* polvo de luz (día) */
+    vec2 dp=vec2(uv.x*asp+.03*sin(T*.2+uv.y*6.),uv.y+T*.012+Y*.14)*26.;vec2 dc=floor(dp);vec2 df=fract(dp)-.5;
+    float dr=h(dc+11.);
+    float du=step(.94,dr)*smoothstep(.16,0.,length(df-(vec2(h(dc+1.3),h(dc+5.1))-.5)*.6))*(.5+.5*sin(T*1.3+dr*30.))*(1.-K)*.7;
+    vec3 rgb=mist*am+c1*a1+c2*a2+vec3(1.,.96,.88)*st+vec3(1.,.88,.62)*du;
+    O=vec4(rgb,clamp(am+a1+a2+st+du,0.,1.));
+  }`,['R','T','K','Y']);
+
+function size(){
+  if(F){const W=hero.clientWidth,H=hero.clientHeight,w=Math.round(Math.min(W,960)),h=Math.round(w*H/W);
+    if(cv.width!==w||cv.height!==h){cv.width=w;cv.height=h;F.gl.viewport(0,0,w,h)}}
+  if(A){const w=Math.round(Math.min(innerWidth,1100)*.6),h=Math.round(w*innerHeight/innerWidth);
+    if(av.width!==w||av.height!==h){av.width=w;av.height=h;A.gl.viewport(0,0,w,h)}}
+}
+addEventListener('resize',size);size();
+
+/* ---------- Cambio Día / Noche ---------- */
+function show(n){$('setM').classList.toggle('is-on',!n);$('setN').classList.toggle('is-on',!!n)}
+let animating=false,clock=0,heroOn=true;
+function begin(n,now){target=n;from=k;start=now;swapped=false;animating=true}
+function pick(n){
+  if(n===target&&queued===null)return;
+  $('bm').setAttribute('aria-pressed',!n);$('bn').setAttribute('aria-pressed',!!n);
+  if(calm){target=night=n;k=n;show(n);return}
+  if(animating)queued=n;else begin(n,clock);
+}
+$('bm').onclick=()=>pick(0);$('bn').onclick=()=>pick(1);
+
+function frame(now){
+  clock=now;
+  const d=now-start;let y=0,s=0,dip=0,k2=k;
+  if(animating){
+    if(d<SINK){const x=d/SINK;y=x*x*(3-2*x)*DEPTH}
+    else{
+      if(!swapped){swapped=true;night=target;show(target)}
+      const x=clamp((d-SINK)/RISE);y=Math.pow(1-x,3.4)*DEPTH;
+    }
+    s=smooth(0,SINK*.92,d)*(1-smooth(SINK+70,SINK+RISE*.92,d));
+    dip=smooth(30,190,d)*(1-smooth(330,720,d));
+    k=from+(target-from)*smooth(120,520,d);
+    k2=from+(target-from)*smooth(340,760,d);
+    if(d>=SINK+RISE){animating=false;k=k2=target;y=s=dip=0;if(queued!==null&&queued!==target){const q=queued;queued=null;begin(q,now)}else queued=null}
+  }
+  y+=fx.intro*.12+fx.sp*.22;
+  s=Math.max(s,fx.intro*.45,Math.min(1,fx.sp*1.5));
+  px+=(tx-px)*.05;py+=(ty-py)*.05;pu+=(tu-pu)*.08;pv+=(tv-pv)*.08;
+  root.setProperty('--px',px.toFixed(3));root.setProperty('--py',py.toFixed(3));
+  root.setProperty('--sink',(y*hero.clientHeight).toFixed(1)+'px');
+  root.setProperty('--k',k.toFixed(3));root.setProperty('--k2',k2.toFixed(3));root.setProperty('--dip',dip.toFixed(3));
+  root.colorScheme=k>.5?'dark':'light';
+  const T=calm?12:now/1000;
+  if(F&&(heroOn||animating)){const {gl,U}=F;gl.uniform2f(U.R,cv.width,cv.height);gl.uniform2f(U.P,pu,pv);gl.uniform1f(U.T,T);gl.uniform1f(U.S,s);gl.uniform1f(U.K,k);gl.drawArrays(gl.TRIANGLES,0,3)}
+  if(A&&scrollY>innerHeight*.3){const {gl,U}=A;gl.uniform2f(U.R,av.width,av.height);gl.uniform1f(U.T,T);gl.uniform1f(U.K,k);gl.uniform1f(U.Y,scrollY/innerHeight);gl.drawArrays(gl.TRIANGLES,0,3)}
+}
+function loop(t){frame(t);requestAnimationFrame(loop)}
+requestAnimationFrame(loop);
+
+/* ---------- Puntero en el hero ---------- */
+if(!calm&&fine){
+  hero.addEventListener('pointermove',e=>{const r=hero.getBoundingClientRect();
+    const u=(e.clientX-r.left)/r.width,v=(e.clientY-r.top)/r.height;
+    tx=u*2-1;ty=v*2-1;if(tu<-1){pu=u;pv=v}tu=u;tv=v});
+  hero.addEventListener('pointerleave',()=>{tx=ty=0;tu=tv=-9});
+}
+
+/* ---------- Cabecera sólida y pausa de la niebla ---------- */
+new IntersectionObserver(([e])=>{heroOn=e.isIntersecting;$('bar').classList.toggle('solid',!e.isIntersecting)},{rootMargin:'-70px 0px 0px 0px'}).observe(hero);
+
+/* ---------- Pestañas del método ---------- */
+const tabs=[$('t1'),$('t2')],panels=[$('p1'),$('p2')];
+function tab(i){
+  tabs.forEach((t,j)=>{t.setAttribute('aria-selected',i===j);t.tabIndex=i===j?0:-1;panels[j].hidden=i!==j});
+  $('tabs').dataset.i=i;$('n2').hidden=i!==1;
+  panels[i].querySelectorAll('li').forEach(li=>li.classList.add('on'));
+  if(window.gsap&&!calm)gsap.fromTo(panels[i].children,{y:30,opacity:0},{y:0,opacity:1,duration:.8,stagger:.08,ease:'expo.out'});
+}
+tabs.forEach((t,i)=>{t.onclick=()=>tab(i);t.onkeydown=e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){const j=1-i;tab(j);tabs[j].focus()}}});
+
+/* ---------- Galería ---------- */
+const tr=$('track'),imgs=[...tr.querySelectorAll('img')];
+const step=dir=>tr.scrollBy({left:dir*tr.clientWidth,behavior:calm?'auto':'smooth'});
+$('prev').onclick=()=>step(-1);$('next').onclick=()=>step(1);
+imgs.forEach((im,i)=>{const b=document.createElement('button');b.setAttribute('aria-label','Ver foto '+(i+1));
+  b.innerHTML='<img alt="" loading="lazy" src="'+im.getAttribute('src')+'">';
+  b.onclick=()=>tr.scrollTo({left:i*tr.clientWidth,behavior:calm?'auto':'smooth'});$('thumbs').appendChild(b)});
+const thumbs=[...$('thumbs').children];
+const mark=()=>{const i=Math.round(tr.scrollLeft/tr.clientWidth);thumbs.forEach((b,j)=>b.classList.toggle('on',i===j))};
+tr.addEventListener('scroll',mark,{passive:true});mark();
+
+/* ---------- Formulario ---------- */
+$('form').addEventListener('submit',e=>{
+  e.preventDefault();
+  let ok=true;
+  for(const id of['nombre','contactoc']){const i=$(id),m=i.nextElementSibling,bad=!i.value.trim();m.textContent=bad?'Este campo es obligatorio.':'';i.setAttribute('aria-invalid',bad);if(bad)ok=false}
+  const p=$('priv');$('perr').textContent=p.checked?'':'Acepta la política de privacidad para continuar.';if(!p.checked)ok=false;
+  if(!ok)return;
+  e.target.innerHTML='<p class="ok" role="status">Gracias. Esta es una vista previa: el envío del formulario todavía no está conectado.</p>';
+});
+
+/* ---------- Cristal: inclinación 3D y foco del cursor ---------- */
+if(fine&&!calm){
+  document.querySelectorAll('.glass').forEach(el=>{
+    const tilt=el.hasAttribute('data-tilt');
+    el.addEventListener('pointermove',e=>{const r=el.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;
+      el.style.setProperty('--mx',x*100+'%');el.style.setProperty('--my',y*100+'%');
+      if(tilt&&window.gsap)gsap.to(el,{rotateY:(x-.5)*9,rotateX:(.5-y)*9,transformPerspective:1000,duration:.6,ease:'power3.out'})});
+    if(tilt)el.addEventListener('pointerleave',()=>window.gsap&&gsap.to(el,{rotateX:0,rotateY:0,duration:1,ease:'elastic.out(1,.5)'}));
+  });
+}
+
+/* ---------- Coreografía con GSAP ---------- */
+function split(el){
+  const walk=node=>{[...node.childNodes].forEach(c=>{
+    if(c.nodeType===3){const frag=document.createDocumentFragment();
+      c.textContent.split(/(\s+)/).forEach(t=>{if(!t)return;if(/^\s+$/.test(t)){frag.appendChild(document.createTextNode(t));return}
+        const w=document.createElement('span');w.className='w';w.innerHTML='<span class="wi"></span>';w.firstChild.textContent=t;frag.appendChild(w)});
+      c.replaceWith(frag)}
+    else if(c.nodeType===1)walk(c)})};
+  walk(el);
+}
+function cinema(){
+  const html=document.documentElement;
+  if(calm||!window.gsap){document.querySelectorAll('.steps li').forEach(li=>li.classList.add('on'));return}
+  gsap.registerPlugin(ScrollTrigger);
+
+  /* scroll suave */
+  if(window.Lenis){
+    const lenis=new Lenis({lerp:.09});
+    lenis.on('scroll',ScrollTrigger.update);
+    gsap.ticker.add(t=>lenis.raf(t*1000));gsap.ticker.lagSmoothing(0);
+    document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{const t=document.querySelector(a.getAttribute('href'));if(t){e.preventDefault();lenis.scrollTo(t,{offset:t===hero?0:-60,duration:1.6})}}));
+  }
+
+  /* intro: la niebla baja un poco y el titular se enfoca (todo visible desde el primer instante) */
+  gsap.timeline()
+    .fromTo(fx,{intro:1},{intro:0,duration:2.4,ease:'power2.out'},0)
+    .from('.ln',{y:24,filter:'blur(8px)',duration:1.2,stagger:.15,ease:'power3.out',clearProps:'filter'},.1);
+
+  /* salida del hero: la casa se hunde en la niebla */
+  gsap.timeline({scrollTrigger:{trigger:hero,start:'top top',end:'bottom top',scrub:.6,onUpdate:s=>{fx.sp=s.progress}}})
+    .to('.ui h1',{y:()=>hero.clientHeight*.22,scale:.94,opacity:0,ease:'none'},0)
+    .to('.dock',{y:()=>hero.clientHeight*.1,opacity:0,ease:'none',duration:.6},0);
+
+  /* barra de progreso de lectura */
+  gsap.to('#prog',{scaleX:1,ease:'none',scrollTrigger:{start:0,end:'max',scrub:.3}});
+
+  /* titulares: palabras que suben desde una máscara */
+  document.querySelectorAll('[data-split]').forEach(el=>{split(el);
+    gsap.from(el.querySelectorAll('.wi'),{yPercent:115,rotate:5,duration:1.2,ease:'expo.out',stagger:.045,scrollTrigger:{trigger:el,start:'top 88%'}})});
+
+  /* párrafo de filosofía que se ilumina palabra a palabra */
+  document.querySelectorAll('[data-scrub]').forEach(el=>{
+    el.innerHTML=el.textContent.split(' ').map(w=>'<span class="ws">'+w+'</span>').join(' ');
+    gsap.fromTo(el.querySelectorAll('.ws'),{opacity:.16},{opacity:1,stagger:.08,ease:'none',scrollTrigger:{trigger:el,start:'top 80%',end:'bottom 45%',scrub:true}})});
+
+  /* elementos sueltos que entran */
+  gsap.utils.toArray('.eyebrow,.lead,.faq,form.glass,.info,.thumbs,.foot').forEach(el=>
+    gsap.from(el,{y:40,opacity:0,duration:1.1,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 90%'}}));
+
+  /* la luna crece de creciente a llena mientras se recorre Filosofía */
+  gsap.fromTo('#shade',{attr:{cx:112,cy:96}},{attr:{cx:292,cy:78},ease:'none',scrollTrigger:{trigger:'.philo',start:'top 85%',end:'bottom 30%',scrub:1}});
+  gsap.fromTo('.moon',{yPercent:30,rotate:-18},{yPercent:-20,rotate:8,ease:'none',scrollTrigger:{trigger:'.philo',start:'top bottom',end:'bottom top',scrub:true}});
+  /* arco: se abre de abajo arriba y la foto hace parallax */
+  gsap.fromTo('.arch',{clipPath:'inset(100% 0 0 0 round 999px 999px 18px 18px)'},{clipPath:'inset(0% 0 0 0 round 999px 999px 18px 18px)',ease:'power2.out',scrollTrigger:{trigger:'.arch',start:'top 85%',end:'top 35%',scrub:1}});
+  gsap.fromTo('.arch img',{yPercent:-12},{yPercent:0,ease:'none',scrollTrigger:{trigger:'.arch',start:'top bottom',end:'bottom top',scrub:true}});
+
+  /* cinta: avanza sola y acelera / invierte con la velocidad del scroll */
+  const loopT=gsap.to('#row',{xPercent:-50,duration:38,ease:'none',repeat:-1});
+  const skew=gsap.quickTo('#row','skewX',{duration:.5,ease:'power3'});
+  ScrollTrigger.create({trigger:'.band',start:'top bottom',end:'bottom top',onUpdate:s=>{
+    const v=s.getVelocity();gsap.to(loopT,{timeScale:s.direction*(1+Math.min(Math.abs(v)/250,6)),duration:.3,overwrite:true});
+    skew(clamp(-v/180,-8,8))},onLeave:()=>skew(0),onLeaveBack:()=>skew(0)});
+
+  /* diferencias: cada carta se hunde cuando llega la siguiente */
+  const cards=gsap.utils.toArray('.stack>li');
+  cards.forEach((li,i)=>{if(i===cards.length-1)return;
+    gsap.to(li,{scale:.9+i*.012,opacity:.45,filter:'blur(2px)',ease:'none',scrollTrigger:{trigger:cards[i+1],start:'top bottom',end:'top 30%',scrub:true}})});
+  gsap.from(cards,{y:80,opacity:0,stagger:.1,duration:1,ease:'power3.out',scrollTrigger:{trigger:'.stack',start:'top 85%'}});
+  gsap.fromTo('.diff figure img',{yPercent:-14},{yPercent:0,ease:'none',scrollTrigger:{trigger:'.diff',start:'top bottom',end:'bottom top',scrub:true}});
+  gsap.from('.diff figure',{clipPath:'inset(30% 30% 30% 30% round 18px)',duration:1.6,ease:'expo.out',scrollTrigger:{trigger:'.diff figure',start:'top 85%'}});
+
+  /* método: el panel se acerca y la línea se dibuja encendiendo cada paso */
+  gsap.fromTo('.method .panel',{scale:.92,rotateX:10,transformPerspective:1400,opacity:.4},{scale:1,rotateX:0,opacity:1,ease:'none',scrollTrigger:{trigger:'.method',start:'top bottom',end:'top 25%',scrub:true}});
+  ScrollTrigger.create({trigger:'#ts',start:'top 75%',end:'bottom 55%',scrub:.6,onUpdate:s=>{
+    gsap.set('#rail',{scaleX:s.progress});
+    document.querySelectorAll('.steps:not([hidden]) li').forEach((li,i)=>li.classList.toggle('on',s.progress>=i/3-.02))}});
+  gsap.from('#p1 li',{y:50,opacity:0,stagger:.12,duration:1,ease:'power3.out',scrollTrigger:{trigger:'#ts',start:'top 85%'}});
+
+  /* propiedad: la foto se abre, se aleja el zoom y el precio cuenta */
+  gsap.fromTo('#reveal',{clipPath:'inset(14% 18% 14% 18% round 18px)'},{clipPath:'inset(0% 0% 0% 0% round 18px)',ease:'none',scrollTrigger:{trigger:'#reveal',start:'top 90%',end:'top 30%',scrub:true}});
+  gsap.fromTo('#track img',{scale:1.3},{scale:1,ease:'none',scrollTrigger:{trigger:'#reveal',start:'top bottom',end:'bottom 40%',scrub:true}});
+  const pr={v:0},fmt=new Intl.NumberFormat('es-ES');
+  gsap.to(pr,{v:1100000,duration:2.2,ease:'power3.out',scrollTrigger:{trigger:'#price',start:'top 92%'},onUpdate:()=>{$('price').textContent=fmt.format(Math.round(pr.v/1000)*1000)+' €'}});
+
+  /* pie: la palabra gigante sale letra a letra */
+  const g=$('giant');g.innerHTML='Entre<i>lunas</i>';
+  g.querySelectorAll('i').forEach(()=>{});
+  const wrapLetters=node=>{[...node.childNodes].forEach(c=>{if(c.nodeType===3){const f=document.createDocumentFragment();[...c.textContent].forEach(ch=>{const s=document.createElement('span');s.className='c';s.textContent=ch;f.appendChild(s)});c.replaceWith(f)}else wrapLetters(c)})};
+  wrapLetters(g);
+  gsap.from('#giant .c',{yPercent:110,opacity:0,rotate:8,stagger:.05,duration:1.4,ease:'expo.out',scrollTrigger:{trigger:'footer',start:'top 85%'}});
+
+  /* botones magnéticos */
+  if(fine)document.querySelectorAll('.mag').forEach(b=>{
+    const qx=gsap.quickTo(b,'x',{duration:.5,ease:'power3'}),qy=gsap.quickTo(b,'y',{duration:.5,ease:'power3'});
+    b.addEventListener('pointermove',e=>{const r=b.getBoundingClientRect();qx((e.clientX-r.left-r.width/2)*.3);qy((e.clientY-r.top-r.height/2)*.4)});
+    b.addEventListener('pointerleave',()=>{qx(0);qy(0)});
+  });
+
+  addEventListener('load',()=>ScrollTrigger.refresh());
+}
+cinema();
+</script>
+</body>
+</html>
